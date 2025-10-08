@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event gg Registration</title>
+    <style>
+        body {
+            font-family: 'Ubuntu', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        .container{
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .container h1{
+            text-align: center;
+            font-size: 40px;
+            margin-bottom: 20px;
+        }
+        .innerContainer{
+            width: 100%;
+            height: auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        .imgContainer{
+            width: 30%;
+            height: auto;
+            margin: 10px;
+            display: grid;
+            place-items: center;
+            box-shadow: 2px 5px 15px;
+            border-radius: 10px;
+        }
+        .imgContainer img{
+            margin-top: 10px;
+            width: 80%;
+            height: auto;
+        }
+        .imgContainer p{
+            font-size: 20px;
+            text-align: center;
+        }
+        .imgContainer h2{
+            font-size: 30px;
+            text-align: center;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        #formConainer{
+            width: 100%;
+            height: auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        #formConainer form{
+            width: 90%;
+            height: auto;
+            margin-bottom: 20px;
+        }
+        label{
+            display: block;
+        }
+        input[type="text"],
+        input[type="tel"],
+        input[type="date"],
+        textarea {
+            width: 90%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        input[type="checkbox"] {
+            margin-right: 10px;
+        }
+        input[type="submit"],
+        input[type="reset"] {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover,
+        input[type="reset"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="container">
+        <h1>photo/videography</h1>
+        <div class="innerContainer">
+            <div class="imgContainer">
+                <img src="bp1.jpg" alt="">
+                <p>Aditya photography</p>
+                <h2>sample 1</h2>
+            </div>
+            <div class="imgContainer">
+                <img src="bp2.jpg" alt="">
+                <p>Siddharth photography</p>
+                <h2>sample 2</h2>
+            </div>
+            <div class="imgContainer">
+                <img src="bp3.jpg" alt="">
+                <p>Pratik photography</p>
+                <h2>sample 3</h2>
+            </div>
+        </div>
+    </div>
+        
+
+    <section id="formConainer">
+        <h2>Registration Form</h2>
+        <form action="evenRegister.php" method="post">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required><br>
+
+            <label for="mobile">Mobile No.:</label>
+            <input type="tel" id="mobile" name="mobile" required><br>
+
+            <label for="event-date">Event Date:</label>
+            <input type="date" id="event-date" name="eventdate" required><br>
+
+            <label for="venue">Venue:</label>
+            <input type="text" id="venue" name="venue" required><br>
+
+            <label for="additional-instruction">Additional Instruction:</label>
+            <textarea id="additional-instruction" name="additionalinstruction" rows="4"></textarea><br>
+
+
+            <input type="submit" value="Submit">
+            <input type="reset" value="Reset">
+        </form>
+    </section>
+   
+</body>
+</html>
