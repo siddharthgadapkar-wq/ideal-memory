@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Ideal Memory Caterers</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .admin-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .admin-header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: var(--gradient-primary);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+        }
+        .data-section {
+            background: white;
+            margin-bottom: 30px;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: var(--shadow-light);
+        }
+        .data-section h3 {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+        }
+        .data-item {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            border-left: 4px solid var(--primary-color);
+        }
+        .data-item h4 {
+            color: var(--text-dark);
+            margin-bottom: 10px;
+        }
+        .data-item p {
+            margin: 5px 0;
+            color: var(--text-light);
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-confirmed { background: #d1ecf1; color: #0c5460; }
+        .status-completed { background: #d4edda; color: #155724; }
+        .status-new { background: #f8d7da; color: #721c24; }
+        .status-read { background: #fff3cd; color: #856404; }
+        .status-replied { background: #d4edda; color: #155724; }
+        .refresh-btn {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            margin: 10px 0;
+            font-weight: 600;
+        }
+        .refresh-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: var(--gradient-secondary);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1>🏢 Ideal Memory Caterers - Admin Panel</h1>
+            <p>View and manage all stored data</p>
+            <button class="refresh-btn" onclick="loadAllData()">🔄 Refresh Data</button>
+        </div>
+
+        <div class="stats-grid" id="statsGrid">
+            <!-- Statistics will be loaded here -->
+        </div>
+
+        <div class="data-section">
+            <h3>📅 Events Data</h3>
+            <div id="eventsData">
+                <p>Loading events...</p>
+            </div>
+        </div>
+
+        <div class="data-section">
+            <h3>📧 Contact Messages</h3>
+            <div id="contactsData">
+                <p>Loading contact messages...</p>
+            </div>
+        </div>
+
+        <div class="data-section">
+            <h3>⭐ Testimonials</h3>
+            <div id="testimonialsData">
+                <p>Loading testimonials...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function loadAllData() {
+            try {
+                // Load events
+                const eventsResponse = await fetch('/api/events');
+                const eventsData = await eventsResponse.json();
+                displayEvents(eventsData.data || []);
+
+                // Load contacts
+                const contactsResponse = await fetch('/api/contact');
+                const contactsData = await contactsResponse.json();
+                displayContacts(contactsData.data || []);
+
+                // Load testimonials
+                const testimonialsResponse = await fetch('/api/testimonials');
+                const testimonialsData = await testimonialsResponse.json();
+                displayTestimonials(testimonialsData.data || []);
+
+                // Update statistics
+                updateStats(eventsData.data || [], contactsData.data || [], testimonialsData.data || []);
+
+            } catch (error) {
+                console.error('Error loading data:', error);
+                document.getElementById('eventsData').innerHTML = '<p style="color: red;">Error loading data. Make sure the server is running.</p>';
+            }
+        }
+
+        function displayEvents(events) {
+            const container = document.getElementById('eventsData');
+            
+            if (events.length === 0) {
+                container.innerHTML = '<p>No events registered yet.</p>';
+                return;
+            }
+
+            container.innerHTML = events.map(event => `
+                <div class="data-item">
+                    <h4>${event.name} - ${event.eventType}</h4>
+                    <p><strong>Mobile:</strong> ${event.mobile}</p>
+                    <p><strong>Email:</strong> ${event.email || 'Not provided'}</p>
+                    <p><strong>Date:</strong> ${new Date(event.eventDate).toLocaleDateString()}</p>
+                    <p><strong>Venue:</strong> ${event.venue}</p>
+                    <p><strong>Guests:</strong> ${event.guestCount || 'Not specified'}</p>
+                    <p><strong>Budget:</strong> ${event.budget || 'Not specified'}</p>
+                    <p><strong>Status:</strong> <span class="status-badge status-${event.status}">${event.status}</span></p>
+                    <p><strong>Registered:</strong> ${new Date(event.createdAt).toLocaleString()}</p>
+                    ${event.additionalInfo ? `<p><strong>Additional Info:</strong> ${event.additionalInfo}</p>` : ''}
+                </div>
+            `).join('');
+        }
+
+        function displayContacts(contacts) {
+            const container = document.getElementById('contactsData');
+            
+            if (contacts.length === 0) {
+                container.innerHTML = '<p>No contact messages yet.</p>';
+                return;
+            }
+
+            container.innerHTML = contacts.map(contact => `
+                <div class="data-item">
+                    <h4>${contact.name} - ${contact.subject}</h4>
+                    <p><strong>Email:</strong> ${contact.email}</p>
+                    <p><strong>Phone:</strong> ${contact.phone}</p>
+                    <p><strong>Message:</strong> ${contact.message}</p>
+                    <p><strong>Priority:</strong> <span class="status-badge status-${contact.priority}">${contact.priority}</span></p>
+                    <p><strong>Status:</strong> <span class="status-badge status-${contact.status}">${contact.status}</span></p>
+                    <p><strong>Received:</strong> ${new Date(contact.createdAt).toLocaleString()}</p>
+                    ${contact.response ? `<p><strong>Response:</strong> ${contact.response.content}</p>` : ''}
+                </div>
+            `).join('');
+        }
+
+        function displayTestimonials(testimonials) {
+            const container = document.getElementById('testimonialsData');
+            
+            if (testimonials.length === 0) {
+                container.innerHTML = '<p>No testimonials yet.</p>';
+                return;
+            }
+
+            container.innerHTML = testimonials.map(testimonial => `
+                <div class="data-item">
+                    <h4>${testimonial.name} - ${testimonial.eventType}</h4>
+                    <p><strong>Rating:</strong> ${'⭐'.repeat(testimonial.rating)} (${testimonial.rating}/5)</p>
+                    <p><strong>Testimonial:</strong> ${testimonial.testimonial}</p>
+                    <p><strong>Event Date:</strong> ${new Date(testimonial.eventDate).toLocaleDateString()}</p>
+                    <p><strong>Status:</strong> 
+                        <span class="status-badge ${testimonial.isApproved ? 'status-confirmed' : 'status-pending'}">
+                            ${testimonial.isApproved ? 'Approved' : 'Pending'}
+                        </span>
+                        ${testimonial.isFeatured ? '<span class="status-badge status-confirmed">Featured</span>' : ''}
+                    </p>
+                    <p><strong>Submitted:</strong> ${new Date(testimonial.createdAt).toLocaleString()}</p>
+                </div>
+            `).join('');
+        }
+
+        function updateStats(events, contacts, testimonials) {
+            const statsContainer = document.getElementById('statsGrid');
+            
+            const totalEvents = events.length;
+            const pendingEvents = events.filter(e => e.status === 'pending').length;
+            const confirmedEvents = events.filter(e => e.status === 'confirmed').length;
+            const totalContacts = contacts.length;
+            const newContacts = contacts.filter(c => c.status === 'new').length;
+            const totalTestimonials = testimonials.length;
+            const approvedTestimonials = testimonials.filter(t => t.isApproved).length;
+
+            statsContainer.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-number">${totalEvents}</div>
+                    <div class="stat-label">Total Events</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${pendingEvents}</div>
+                    <div class="stat-label">Pending Events</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${confirmedEvents}</div>
+                    <div class="stat-label">Confirmed Events</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${totalContacts}</div>
+                    <div class="stat-label">Contact Messages</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${newContacts}</div>
+                    <div class="stat-label">New Messages</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${totalTestimonials}</div>
+                    <div class="stat-label">Total Testimonials</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${approvedTestimonials}</div>
+                    <div class="stat-label">Approved Testimonials</div>
+                </div>
+            `;
+        }
+
+        // Load data when page loads
+        document.addEventListener('DOMContentLoaded', loadAllData);
+    </script>
+</body>
+</html>
